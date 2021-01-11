@@ -202,7 +202,8 @@ module RedmineRefIssues
           else
             value.each do |v|
               sql << ' OR ' if sql != '('
-              sql << "LOWER(#{RedmineRefIssues.cast_table_field db_table, db_field}) LIKE '%#{self.class.connection.quote_string(v.to_s.downcase)}%'"
+              sql << "LOWER(#{RedmineRefIssues.cast_table_field db_table, db_field}) LIKE" \
+                      " '%#{self.class.connection.quote_string(v.to_s.downcase)}%'"
             end
           end
 
@@ -213,7 +214,8 @@ module RedmineRefIssues
 
           value.each do |v|
             sql << ' OR ' if sql != '('
-            sql << "LOWER(#{RedmineRefIssues.cast_table_field db_table, db_field}) = '#{self.class.connection.quote_string(v.to_s.downcase)}'"
+            sql << "LOWER(#{RedmineRefIssues.cast_table_field db_table, db_field}) =" \
+                    " '#{self.class.connection.quote_string(v.to_s.downcase)}'"
             next unless field =~ /^cf_([0-9]+)$/
 
             custom_field_id = Regexp.last_match(1)
