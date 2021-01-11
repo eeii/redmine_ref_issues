@@ -1,0 +1,2 @@
+module RefIssuesHelper
+end

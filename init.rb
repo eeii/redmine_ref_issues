@@ -1,17 +1,15 @@
-plugin_name = :redmine_wiki_lists
+Redmine::Plugin.register :redmine_ref_issues do
+  name 'Redmine ref_issues macro'
+  author 'AlphaNodes GmbH'
+  description 'Wiki macro to list issues.'
+  version RedmineRefIssues::VERSION
+  url 'https://github.com/alphanodes/redmine_ref_issues'
+  author_url 'https://alphanodes.com/'
+  directory __dir__
 
-Rails.configuration.to_prepare do
-  %w{issue_name_link ref_issues/parser ref_issues wiki_list}.each do |file_name|
-    require_dependency "#{plugin_name}/#{file_name}"
-  end
+  requires_redmine version_or_higher: '4.1'
 end
 
-Redmine::Plugin.register plugin_name do
-  requires_redmine :version_or_higher => '3.4'
-  name 'Redmine Wiki Lists plugin'
-  author 'Tomohisa Kusukawa'
-  description 'wiki macros to display lists of issues.'
-  version '0.0.9'
-  url 'https://www.r-labs.org/projects/wiki_lists/wiki/Wiki_Lists_en'
-  author_url 'https://github.com/tkusukawa/'
+Rails.configuration.to_prepare do
+  RedmineRefIssues.setup
 end

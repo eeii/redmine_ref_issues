@@ -1,0 +1,90 @@
+require:
+  - rubocop-performance
+  - rubocop-rails
+
+Rails:
+  Enabled: true
+
+AllCops:
+  TargetRubyVersion: 2.4
+  TargetRailsVersion: 5.2
+  NewCops: enable
+  Include:
+    - 'Gemfile'
+    - '/**/*.rsb'
+    - '/**/*.rb'
+
+Metrics/AbcSize:
+  Enabled: false
+
+Metrics/BlockLength:
+  Enabled: false
+
+Metrics/ClassLength:
+  Enabled: false
+
+Metrics/CyclomaticComplexity:
+  Enabled: false
+
+Layout/LineLength:
+  Max: 140
+
+Metrics/MethodLength:
+  Max: 60
+
+Metrics/ModuleLength:
+  Enabled: false
+
+Metrics/PerceivedComplexity:
+  Max: 25
+
+Rails/ApplicationJob:
+  Enabled: false
+
+Rails/ApplicationRecord:
+  Enabled: false
+
+Rails/CreateTableWithTimestamps:
+  Enabled: false
+
+Rails/HelperInstanceVariable:
+  Enabled: false
+
+Rails/SkipsModelValidations:
+  Enabled: true
+
+Rails/ApplicationMailer:
+  Enabled: false
+
+Performance/ChainArrayAllocation:
+  Enabled: true
+
+Style/AutoResourceCleanup:
+  Enabled: true
+
+Style/FrozenStringLiteralComment:
+  Enabled: false
+
+Style/Documentation:
+  Enabled: false
+
+# required for travis/ci (symbolic links problem)
+Style/ExpandPathArguments:
+  Enabled: false
+
+Style/HashTransformKeys:
+  Enabled: false
+
+Style/HashTransformValues:
+  Enabled: false
+
+Naming/VariableNumber:
+  Enabled: false
+
+Metrics/ParameterLists:
+  Enabled: true
+
+Rails/OutputSafety:
+  Enabled: true
+  Exclude:
+    - 'lib/redmine_ref_issues/macro.rb'
