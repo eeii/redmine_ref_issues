@@ -10,63 +10,127 @@ class WikiControllerTest < RedmineRefIssues::ControllerTest
            :issue_statuses, :issues, :issue_categories,
            :custom_fields, :custom_values, :custom_fields_trackers,
            :wikis, :wiki_pages, :wiki_contents,
-           :queries
+           :attachments, :queries
 
   def setup
     @project = projects :projects_001
     @wiki = @project.wiki
     @page_name = 'ref_issues_macro_test'
-    @page = @wiki.find_or_new_page @page_name
-    @page.content = WikiContent.new
-    @page.content.text = 'test'
-    @page.save!
-
-    @default_test_macro = '{{ref_issues(-f:subject ~ sorting)}}'
+    @request.session[:user_id] = 2
   end
 
-  def test_show_with_ref_issues_macro
-    @request.session[:user_id] = 2
-
-    macro_options = ['-i=1',
-                     '-q=Public query for all projects',
-                     '-f:subject ~ sorting',
-                     '-f:author_id = 1, -f:status ! New, project, subject, author, assigned_to, status',
-                     '-f:tracker == Bug | Feature request, -f:project = eCookbook',
-                     '-f:issue_id >< 1|5',
-                     '-f:issue_id == 1|3',
-                     '-f:category == Printing|Recipes, subject, category',
-                     '-f:treated jsmith 2017-05-01|[1days_ago]']
-
-    macro_options.each do |macro_option|
-      text = "{{ref_issues(#{macro_option})}}"
-      @page.content.text = text
-      assert_save @page.content
-
-      get :show,
-          params: { project_id: 1, id: @page_name }
-
-      assert_response :success
-      # puts macro_option
-      assert_select 'table.list.issues'
-    end
-  end
-
-  def test_ref_issues_with_zero_option
-    @request.session[:user_id] = 2
-    @page.content.text = '{{ref_issues(-0,-f:subject = Cannot print recipes2)}}'
-    assert_save @page.content
+  def test_ref_issues_with_query_by_id
+    prepare_macro_page '{{ref_issues(-i=1)}}'
 
     get :show,
         params: { project_id: 1, id: @page_name }
 
     assert_response :success
-    assert_select 'table.list.issues', count: 0
+    assert_ref_issues_macro
+  end
+
+  def test_ref_issues_with_query_by_name
+    prepare_macro_page '{{ref_issues(-q=Public query for all projects)}}'
+
+    get :show,
+        params: { project_id: 1, id: @page_name }
+
+    assert_response :success
+    assert_ref_issues_macro
+  end
+
+  def test_ref_issues_with_subject_search
+    prepare_macro_page '{{ref_issues(-f:subject ~ sorting)}}'
+
+    get :show,
+        params: { project_id: 1, id: @page_name }
+
+    assert_response :success
+    assert_ref_issues_macro
+  end
+
+  def test_ref_issues_with_negation_filter_and_columns
+    prepare_macro_page '{{ref_issues(-f:author_id = 1, -f:status ! New, project, subject, author, assigned_to, status)}}'
+
+    get :show,
+        params: { project_id: 1, id: @page_name }
+
+    assert_response :success
+    assert_ref_issues_macro
+  end
+
+  def test_ref_issues_with_project_filter
+    prepare_macro_page '{{ref_issues(-f:project = eCookbook)}}'
+
+    get :show,
+        params: { project_id: 1, id: @page_name }
+
+    assert_response :success
+    assert_ref_issues_macro
+  end
+
+  def test_ref_issues_with_tracker_filter
+    prepare_macro_page '{{ref_issues(-f:tracker == Bug | Feature request)}}'
+
+    get :show,
+        params: { project_id: 1, id: @page_name }
+
+    assert_response :success
+    assert_ref_issues_macro
+  end
+
+  def test_ref_issues_with_min_and_max_id
+    prepare_macro_page '{{ref_issues(-f:issue_id >< 1|5)}}'
+
+    get :show,
+        params: { project_id: 1, id: @page_name }
+
+    assert_response :success
+    assert_ref_issues_macro
+  end
+
+  def test_ref_issues_with_id_or
+    prepare_macro_page '{{ref_issues(-f:issue_id == 1|3)}}'
+
+    get :show,
+        params: { project_id: 1, id: @page_name }
+
+    assert_response :success
+    assert_ref_issues_macro
+  end
+
+  def test_ref_issues_with_category_filter
+    prepare_macro_page '{{ref_issues(-f:category == Printing|Recipes, subject, category)}}'
+
+    get :show,
+        params: { project_id: 1, id: @page_name }
+
+    assert_response :success
+    assert_ref_issues_macro
+  end
+
+  def test_ref_issues_with_treated
+    prepare_macro_page '{{ref_issues(-f:treated jsmith 2017-05-01|[1days_ago])}}'
+
+    get :show,
+        params: { project_id: 1, id: @page_name }
+
+    assert_response :success
+    assert_ref_issues_macro
+  end
+
+  def test_ref_issues_with_zero_option
+    prepare_macro_page '{{ref_issues(-0,-f:subject = Cannot print recipes2)}}'
+
+    get :show,
+        params: { project_id: 1, id: @page_name }
+
+    assert_response :success
+    assert_ref_issues_macro count: 0
   end
 
   def test_ref_issues_with_linked_id
-    @request.session[:user_id] = 2
-    @page.content.text = '{{ref_issues(-f:subject = Add ingredients categories, -l=id)}}'
-    assert_save @page.content
+    prepare_macro_page '{{ref_issues(-f:subject = Add ingredients categories, -l=id)}}'
 
     get :show,
         params: { project_id: 1, id: @page_name }
@@ -76,9 +140,7 @@ class WikiControllerTest < RedmineRefIssues::ControllerTest
   end
 
   def test_ref_issues_with_description
-    @request.session[:user_id] = 2
-    @page.content.text = '{{ref_issues(-f:subject = Add ingredients categories, -t=description)}}'
-    assert_save @page.content
+    prepare_macro_page '{{ref_issues(-f:subject = Add ingredients categories, -t=description)}}'
 
     get :show,
         params: { project_id: 1, id: @page_name }
@@ -89,9 +151,7 @@ class WikiControllerTest < RedmineRefIssues::ControllerTest
   end
 
   def test_ref_issues_with_count
-    @request.session[:user_id] = 2
-    @page.content.text = '{{ref_issues(-f:subject ~ recipe, -c)}}'
-    assert_save @page.content
+    prepare_macro_page '{{ref_issues(-f:subject ~ recipe, -c)}}'
 
     get :show,
         params: { project_id: 1, id: @page_name }
@@ -102,9 +162,7 @@ class WikiControllerTest < RedmineRefIssues::ControllerTest
   end
 
   def test_ref_issues_with_sum
-    @request.session[:user_id] = 2
-    @page.content.text = '{{ref_issues(-f:subject ~ recipe, -sum:estimated_hours)}}'
-    assert_save @page.content
+    prepare_macro_page '{{ref_issues(-f:subject ~ recipe, -sum:estimated_hours)}}'
 
     get :show,
         params: { project_id: 1, id: @page_name }
@@ -115,16 +173,13 @@ class WikiControllerTest < RedmineRefIssues::ControllerTest
   end
 
   def test_multiple_ref_issues_macros
-    @request.session[:user_id] = 2
-
-    @page.content.text = "#{@default_test_macro} and #{@default_test_macro} and #{@default_test_macro}"
-    assert_save @page.content
+    prepare_macro_page '{{ref_issues(-i=1)}} and {{ref_issues(-f:subject ~ sorting)}}'
 
     get :show,
         params: { project_id: 1, id: @page_name }
 
     assert_response :success
-    assert_select 'table.list.issues'
+    assert_ref_issues_macro count: 2
   end
 
   def test_ref_issues_macro_without_issue_permission
@@ -136,13 +191,12 @@ class WikiControllerTest < RedmineRefIssues::ControllerTest
     assert User.current.allowed_to?(:view_wiki_pages, @project)
     assert_not User.current.allowed_to? :view_issues, @project
 
-    @page.content.text = '-0,-f:subject = Cannot print recipes'
-    assert_save @page.content
+    prepare_macro_page '-0,-f:subject = Cannot print recipes'
 
     get :show,
         params: { project_id: 1, id: @page_name }
 
     assert_response :success
-    assert_select 'table.list.issues', count: 0
+    assert_ref_issues_macro count: 0
   end
 end

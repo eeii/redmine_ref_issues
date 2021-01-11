@@ -91,6 +91,9 @@ Put linked text.
 　
 -t[=column]
 Put markup text.
+
+-sum[=column]
+Sum of specified column for issues.
 　
 -c
 number of issues.
@@ -199,6 +202,12 @@ If you do not specify the columns, same columns with customquery are displayed.
     ```PowerShell
     {{ref_issues(-f:treated jsmith 2017-05-01|[1days_ago])}}
     ```
+
+14. Put sum of estimated_hours of issues that contain 'sorting' in subject
+
+   ```PowerShell
+   {{ref_issues(-f:subject ~ sorting, -sum:estimated_hours)}}
+   ```
 
 ## Running tests
 

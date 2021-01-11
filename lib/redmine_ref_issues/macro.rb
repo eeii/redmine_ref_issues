@@ -188,7 +188,7 @@ module RedmineRefIssues
             disp << if parser.only_link
                       link_to word.to_s, issue_path(issue)
                     else
-                      textilizable word, object: issue
+                      textilizable word, object: issue, inline_attachments: false
                     end
           end
         elsif parser.count_flag
