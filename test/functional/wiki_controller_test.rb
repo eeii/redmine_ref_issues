@@ -8,7 +8,7 @@ class WikiControllerTest < RedmineRefIssues::ControllerTest
            :trackers,
            :groups_users,
            :issue_statuses, :issues, :issue_categories,
-           :custom_fields, :custom_values, :custom_fields_trackers,
+           :custom_fields, :custom_values, :custom_fields_trackers, :custom_fields_projects,
            :wikis, :wiki_pages, :wiki_contents,
            :attachments, :queries
 
