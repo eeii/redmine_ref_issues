@@ -154,7 +154,7 @@ module RedmineRefIssues
         end
 
         @query.column_names = parser.columns unless parser.columns.empty?
-        @issues = @query.issues(order: sort_clause)
+        @issues = @query.issues order: sort_clause
 
         if parser.zero_flag && @issues.size.zero?
           disp = ''
@@ -183,7 +183,7 @@ module RedmineRefIssues
               raise msg.html_safe
             end
 
-            disp << ' ' unless disp.empty?
+            disp << ' ' if disp.present?
 
             disp << if parser.only_link
                       link_to word.to_s, issue_path(issue)

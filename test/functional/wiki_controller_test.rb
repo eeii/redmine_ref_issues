@@ -161,6 +161,25 @@ class WikiControllerTest < RedmineRefIssues::ControllerTest
                   text: /2/
   end
 
+  def test_ref_issues_with_enum_filter
+    cf = IssueCustomField.create! name: 'Key',
+                                  is_for_all: true,
+                                  is_filter: true,
+                                  tracker_ids: [1, 2, 3],
+                                  field_format: 'enumeration'
+
+    cf.enumerations << valueb = CustomFieldEnumeration.new(name: 'Value B', position: 1)
+    CustomValue.create! custom_field: cf, customized: Issue.find(1), value: valueb.id
+
+    prepare_macro_page "{{ref_issues(-f:cf_#{cf.id} == Value B, id, cf_#{cf.id})}}"
+
+    get :show,
+        params: { project_id: 1, id: @page_name }
+
+    assert_response :success
+    assert_ref_issues_macro
+  end
+
   def test_ref_issues_with_sum
     prepare_macro_page '{{ref_issues(-f:subject ~ recipe, -sum:estimated_hours)}}'
 

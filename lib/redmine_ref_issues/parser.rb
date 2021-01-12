@@ -68,15 +68,15 @@ module RedmineRefIssues
           case words
           when /\A([^\s]*)\s+([^\s]*)\z/
             filter = Regexp.last_match(1)
-            operator = refer_field(obj, Regexp.last_match(2))
+            operator = refer_field obj, Regexp.last_match(2)
           when /\A([^\s]*)\s+([^\s]*)\s+(.*)\z/
             filter = Regexp.last_match(1)
             operator = refer_field(obj, Regexp.last_match(2))
-            values = words_to_word_array(obj, Regexp.last_match(3))
+            values = words_to_word_array obj, Regexp.last_match(3)
           when /\A(.*)=(.*)\z/
             filter = Regexp.last_match(1)
             operator = '='
-            values = words_to_word_array(obj, Regexp.last_match(2))
+            values = words_to_word_array obj, Regexp.last_match(2)
           else
             filter = words
             operator = '='
@@ -211,7 +211,6 @@ module RedmineRefIssues
           return sql
         elsif operator == '=='
           sql = '('
-
           value.each do |v|
             sql << ' OR ' if sql != '('
             sql << "LOWER(#{RedmineRefIssues.cast_table_field db_table, db_field}) =" \
@@ -219,10 +218,9 @@ module RedmineRefIssues
             next unless field =~ /^cf_([0-9]+)$/
 
             custom_field_id = Regexp.last_match(1)
-            custom_field_enumerations = CustomFieldEnumeration.where(custom_field_id: custom_field_id, name: v)
+            custom_field_enumerations = CustomFieldEnumeration.where custom_field_id: custom_field_id, name: v
             custom_field_enumerations.each do |custom_field_enumeration|
-              sql << " OR LOWER(#{RedmineRefIssues.cast_table_field db_table, db_field}) =" \
-                     " #{self.class.connection.quote_string(custom_field_enumeration.id.to_s.downcase)}'"
+              sql << " OR #{db_table}.#{db_field} = '#{custom_field_enumeration.id}'"
             end
           end
 
@@ -257,14 +255,14 @@ module RedmineRefIssues
           return sql
         end
 
-        super(field, operator, value, db_table, db_field, is_custom_filter)
+        super field, operator, value, db_table, db_field, is_custom_filter
       end
     end
 
     def words_to_word_array(obj, words)
       words.split('|').collect do |word|
         word.strip!
-        refer_field(obj, word)
+        refer_field obj, word
       end
     end
 
