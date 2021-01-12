@@ -50,7 +50,36 @@ class WikiControllerTest < RedmineRefIssues::ControllerTest
   end
 
   def test_ref_issues_with_negation_filter_and_columns
-    prepare_macro_page '{{ref_issues(-f:author_id = 1, -f:status ! New, project, subject, author, assigned_to, status)}}'
+    prepare_macro_page '{{ref_issues(-f:author_id = 1, -f:status ! New, id)}}'
+
+    get :show,
+        params: { project_id: 1, id: @page_name }
+
+    assert_response :success
+    assert_ref_issues_macro
+  end
+
+  def test_ref_issues_with_columns
+    prepare_macro_page '{{ref_issues(-f:author_id = 1' \
+                       ', project' \
+                       ', tracker' \
+                       ', parent' \
+                       ', status' \
+                       ', priority' \
+                       ', subject' \
+                       ', author' \
+                       ', assigned_to' \
+                       ', updated_on' \
+                       ', category' \
+                       ', fixed_version' \
+                       ', start_date' \
+                       ', due_date' \
+                       ', estimated_hours' \
+                       ', done_ratio' \
+                       ', created_on' \
+                       ', closed_on' \
+                       ', relations' \
+                       ', cf_1)}}'
 
     get :show,
         params: { project_id: 1, id: @page_name }

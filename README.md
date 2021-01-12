@@ -205,9 +205,9 @@ If you do not specify the columns, same columns with customquery are displayed.
 
 14. Put sum of estimated_hours of issues that contain 'sorting' in subject
 
-   ```PowerShell
-   {{ref_issues(-f:subject ~ sorting, -sum:estimated_hours)}}
-   ```
+    ```PowerShell
+    {{ref_issues(-f:subject ~ sorting, -sum:estimated_hours)}}
+    ```
 
 ## Running tests
 
