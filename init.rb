@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 Redmine::Plugin.register :redmine_ref_issues do
   name 'Redmine ref_issues macro'
   author 'AlphaNodes GmbH'

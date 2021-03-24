@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module RedmineRefIssues
   class Parser
     attr_reader :search_words_s, :search_words_d, :search_words_w, :columns,
@@ -192,7 +194,7 @@ module RedmineRefIssues
       def query.sql_for_field(field, operator, value, db_table, db_field, is_custom_filter = false) # rubocop:disable Metrics/ParameterLists, Style/OptionalBooleanParameter
         if operator == '~'
           # monkey patched for ref_issues: originally treat single value  -> extend multiple value
-          sql = '('
+          sql = +'('
           if db_field == 'subjectdescription'
             value.each do |v|
               sql << ' OR ' if sql != '('
@@ -210,7 +212,7 @@ module RedmineRefIssues
           sql << ')'
           return sql
         elsif operator == '=='
-          sql = '('
+          sql = +'('
           value.each do |v|
             sql << ' OR ' if sql != '('
             sql << "LOWER(#{RedmineRefIssues.cast_table_field db_table, db_field}) =" \

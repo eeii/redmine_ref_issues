@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module RedmineRefIssues
   Redmine::WikiFormatting::Macros.register do
     desc 'Displays a list of referer issues.'
@@ -114,7 +116,7 @@ module RedmineRefIssues
 
           filter_str = filter_set[:filter] + filter_set[:operator] + filter_set[:values].join('|')
           cr_count = 0
-          msg = "- failed add_filter: #{filter_str}<br><br>[FILTER]<br>"
+          msg = +"- failed add_filter: #{filter_str}<br><br>[FILTER]<br>"
 
           @query.available_filters.each do |k, _f|
             if cr_count >= 5
@@ -159,7 +161,7 @@ module RedmineRefIssues
         if parser.zero_flag && @issues.size.zero?
           disp = ''
         elsif parser.only_text || parser.only_link
-          disp = ''
+          disp = +''
           atr = parser.only_text if parser.only_text
           atr = parser.only_link if parser.only_link
           word = nil
@@ -174,7 +176,7 @@ module RedmineRefIssues
             end
 
             if word.nil?
-              msg = 'attributes:'
+              msg = +'attributes:'
 
               issue.attributes.each do |a|
                 msg += "#{a}, "
@@ -211,13 +213,13 @@ module RedmineRefIssues
         elsif params[:format] == 'pdf'
           disp = render(partial: 'issues/list.html', locals: { issues: @issues, query: @query })
         else
-          disp = context_menu.to_s
+          disp = +context_menu.to_s
           disp << render(partial: 'issues/list', locals: { issues: @issues, query: @query })
         end
 
         disp.html_safe
       rescue StandardError, ActiveRecord::RecordInvalid => e
-        msg = e.to_s
+        msg = +e.to_s
         if msg[0] != '-'
           e.backtrace.each do |backtrace|
             msg << "<br>#{backtrace}"
