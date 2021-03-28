@@ -32,7 +32,7 @@ module RedmineRefIssues
             msg += "#{a.name}, "
           end
 
-          attributes = attributes[5..-1]
+          attributes = attributes[5..]
           msg += '<br>' if attributes
         end
 

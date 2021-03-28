@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+raise "\n\033[31maredmine_ref_issues requires ruby 2.6 or newer. Please update your ruby version.\033[0m" if RUBY_VERSION < '2.6'
+
 Redmine::Plugin.register :redmine_ref_issues do
   name 'Redmine ref_issues macro'
   author 'AlphaNodes GmbH'
