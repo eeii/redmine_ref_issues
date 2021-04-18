@@ -17,9 +17,8 @@ module RedmineRefIssues
       assert_save @page
     end
 
-    def assert_ref_issues_macro(options = {})
-      count = options[:count].presence || 1
-      if options[:text].present?
+    def assert_ref_issues_macro(text: nil, count: 1)
+      if text.present?
         assert_select 'table.list.issues', text: /#{text}/, count: count
       else
         assert_select 'table.list.issues', count: count

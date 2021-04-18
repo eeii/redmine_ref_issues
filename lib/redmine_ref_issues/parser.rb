@@ -6,7 +6,7 @@ module RedmineRefIssues
                 :custom_query_name, :custom_query_id, :additional_filter, :only_text, :only_link, :count_flag, :zero_flag, :sum_field
 
     def initialize(obj, args = nil, project = nil)
-      parse_args(obj, args, project) if args
+      parse_args obj, args, project if args
     end
 
     def parse_args(obj, args, project) # rubocop:disable Metrics/MethodLength
@@ -26,8 +26,8 @@ module RedmineRefIssues
 
       args.each do |arg|
         arg.strip!
-        arg.gsub!('&gt;', '>')
-        arg.gsub!('&lt;', '<')
+        arg.gsub! '&gt;', '>'
+        arg.gsub! '&lt;', '<'
 
         case arg
         when /\A-([^=:]*)\s*([=:])\s*(.*)\z/
@@ -69,14 +69,14 @@ module RedmineRefIssues
 
           case words
           when /\A([^\s]*)\s+([^\s]*)\z/
-            filter = Regexp.last_match(1)
+            filter = Regexp.last_match 1
             operator = refer_field obj, Regexp.last_match(2)
           when /\A([^\s]*)\s+([^\s]*)\s+(.*)\z/
-            filter = Regexp.last_match(1)
-            operator = refer_field(obj, Regexp.last_match(2))
+            filter = Regexp.last_match 1
+            operator = refer_field obj, Regexp.last_match(2)
             values = words_to_word_array obj, Regexp.last_match(3)
           when /\A(.*)=(.*)\z/
-            filter = Regexp.last_match(1)
+            filter = Regexp.last_match 1
             operator = '='
             values = words_to_word_array obj, Regexp.last_match(2)
           else
@@ -198,14 +198,14 @@ module RedmineRefIssues
           if db_field == 'subjectdescription'
             value.each do |v|
               sql << ' OR ' if sql != '('
-              sql << "LOWER(#{db_table}.subject) LIKE '%#{self.class.connection.quote_string(v.to_s.downcase)}%'"
-              sql << " OR LOWER(#{db_table}.description) LIKE '%#{self.class.connection.quote_string(v.to_s.downcase)}%'"
+              sql << "LOWER(#{db_table}.subject) LIKE '%#{self.class.connection.quote_string v.to_s.downcase}%'"
+              sql << " OR LOWER(#{db_table}.description) LIKE '%#{self.class.connection.quote_string v.to_s.downcase}%'"
             end
           else
             value.each do |v|
               sql << ' OR ' if sql != '('
               sql << "LOWER(#{RedmineRefIssues.cast_table_field db_table, db_field}) LIKE" \
-                      " '%#{self.class.connection.quote_string(v.to_s.downcase)}%'"
+                      " '%#{self.class.connection.quote_string v.to_s.downcase}%'"
             end
           end
 
@@ -216,10 +216,10 @@ module RedmineRefIssues
           value.each do |v|
             sql << ' OR ' if sql != '('
             sql << "LOWER(#{RedmineRefIssues.cast_table_field db_table, db_field}) =" \
-                    " '#{self.class.connection.quote_string(v.to_s.downcase)}'"
+                    " '#{self.class.connection.quote_string v.to_s.downcase}'"
             next unless field =~ /^cf_([0-9]+)$/
 
-            custom_field_id = Regexp.last_match(1)
+            custom_field_id = Regexp.last_match 1
             custom_field_enumerations = CustomFieldEnumeration.where custom_field_id: custom_field_id, name: v
             custom_field_enumerations.each do |custom_field_enumeration|
               sql << " OR #{db_table}.#{db_field} = '#{custom_field_enumeration.id}'"
@@ -237,7 +237,7 @@ module RedmineRefIssues
           if /^\d+$/.match?(operator)
             user = operator
           else
-            user_obj = User.find_by(login: operator)
+            user_obj = User.find_by login: operator
             raise "- can not find user <#{operator}>" if user_obj.nil?
 
             user = user_obj.id.to_s
@@ -272,11 +272,11 @@ module RedmineRefIssues
       return User.current.id.to_s if word.include? '[current_user_id]'
       return User.current.login if word.include? '[current_user]'
       return @project.id.to_s if word.include? '[current_project_id]'
-      return (User.current.today - Regexp.last_match(1).to_i).strftime('%Y-%m-%d') if word =~ /\[(.*)days_ago\]/
+      return (User.current.today - Regexp.last_match(1).to_i).strftime '%Y-%m-%d' if word =~ /\[(.*)days_ago\]/
 
       if word =~ /\A\[(.*)\]\z/
-        atr = Regexp.last_match(1)
-        if obj.instance_of?(Issue)
+        atr = Regexp.last_match 1
+        if obj.instance_of? Issue
           issue = obj
         elsif obj.instance_of?(Journal) && obj.journalized_type == 'Issue'
           issue = obj.issue
@@ -284,7 +284,7 @@ module RedmineRefIssues
           raise "- can not use reference '#{word}' except for issues."
         end
 
-        if issue.attributes.key?(atr)
+        if issue.attributes.key? atr
           word = issue.attributes[atr]
         else
           issue.custom_field_values.each do |cf|

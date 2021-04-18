@@ -54,19 +54,19 @@ module RedmineRefIssues
 
         sort_clear
         sort_init(@query.sort_criteria.empty? ? [%w[id desc]] : @query.sort_criteria)
-        sort_update(@query.sortable_columns)
+        sort_update @query.sortable_columns
         # @issue_count_by_group = @query.issue_count_by_group
 
         parser.search_words_s.each do |words|
-          @query.add_filter('subject', '~', words)
+          @query.add_filter 'subject', '~', words
         end
 
         parser.search_words_d.each do |words|
-          @query.add_filter('description', '~', words)
+          @query.add_filter 'description', '~', words
         end
 
         parser.search_words_w.each do |words|
-          @query.add_filter('subjectdescription', '~', words)
+          @query.add_filter 'subjectdescription', '~', words
         end
 
         models = { 'tracker' => Tracker,
@@ -100,7 +100,7 @@ module RedmineRefIssues
             unless values.nil?
               tgt_objs = []
               values.each do |value|
-                tgt_obj = models[filter].find_by(attributes[filter] => value)
+                tgt_obj = models[filter].find_by attributes[filter] => value
                 raise "- can not resolve '#{value}' in #{models[filter]}.#{attributes[filter]} " if tgt_obj.nil?
 
                 tgt_objs << tgt_obj.id.to_s
@@ -211,7 +211,7 @@ module RedmineRefIssues
 
           disp = sum.to_s
         elsif params[:format] == 'pdf'
-          disp = render(partial: 'issues/list.html', locals: { issues: @issues, query: @query })
+          disp = render partial: 'issues/list.html', locals: { issues: @issues, query: @query }
         else
           disp = +context_menu.to_s
           disp << render(partial: 'issues/list', locals: { issues: @issues, query: @query })

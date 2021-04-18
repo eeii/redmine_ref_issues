@@ -16,5 +16,10 @@ module RedmineRefIssues
         "#{db_table}.#{db_field}"
       end
     end
+
+    def additionals_help_items
+      [{ title: 'Redmine ref_issues macro',
+         url: 'https://github.com/AlphaNodes/redmine_ref_issues#usage' }]
+    end
   end
 end

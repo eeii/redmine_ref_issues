@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require File.expand_path '../test_helper', __dir__
+require File.expand_path '../../test_helper', __FILE__
 
 class WikiControllerTest < RedmineRefIssues::ControllerTest
   fixtures :users, :email_addresses, :roles,
@@ -199,7 +199,7 @@ class WikiControllerTest < RedmineRefIssues::ControllerTest
                                   tracker_ids: [1, 2, 3],
                                   field_format: 'enumeration'
 
-    cf.enumerations << valueb = CustomFieldEnumeration.new(name: 'Value B', position: 1)
+    cf.enumerations << (valueb = CustomFieldEnumeration.new name: 'Value B', position: 1)
     CustomValue.create! custom_field: cf, customized: Issue.find(1), value: valueb.id
 
     prepare_macro_page "{{ref_issues(-f:cf_#{cf.id} == Value B, id, cf_#{cf.id})}}"
@@ -235,8 +235,8 @@ class WikiControllerTest < RedmineRefIssues::ControllerTest
   def test_ref_issues_macro_without_issue_permission
     @request.session[:user_id] = 8
 
-    Role.all.each { |r| r.remove_permission!(:view_issues) }
-    User.current = User.find(8)
+    Role.all.each { |r| r.remove_permission! :view_issues }
+    User.current = User.find 8
 
     assert User.current.allowed_to?(:view_wiki_pages, @project)
     assert_not User.current.allowed_to? :view_issues, @project
