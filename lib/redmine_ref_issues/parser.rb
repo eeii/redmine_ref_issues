@@ -205,7 +205,7 @@ module RedmineRefIssues
             value.each do |v|
               sql << ' OR ' if sql != '('
               sql << "LOWER(#{RedmineRefIssues.cast_table_field db_table, db_field}) LIKE" \
-                      " '%#{self.class.connection.quote_string v.to_s.downcase}%'"
+                     " '%#{self.class.connection.quote_string v.to_s.downcase}%'"
             end
           end
 
@@ -216,7 +216,7 @@ module RedmineRefIssues
           value.each do |v|
             sql << ' OR ' if sql != '('
             sql << "LOWER(#{RedmineRefIssues.cast_table_field db_table, db_field}) =" \
-                    " '#{self.class.connection.quote_string v.to_s.downcase}'"
+                   " '#{self.class.connection.quote_string v.to_s.downcase}'"
             next unless field =~ /^cf_([0-9]+)$/
 
             custom_field_id = Regexp.last_match 1
@@ -244,15 +244,15 @@ module RedmineRefIssues
           end
 
           sql =  '(' \
-                  "  (issues.author_id = #{user}" \
-                  "   AND (CAST(issues.created_on AS DATE) BETWEEN '#{start_date}' AND '#{end_date}'))" \
-                  '  OR (' \
-                  "    (select count(*) from journals where journalized_type = 'Issue' AND journalized_id = issues.id" \
-                  "      AND journals.user_id = #{user}" \
-                  "      AND (CAST(journals.created_on AS DATE) BETWEEN '#{start_date}' AND '#{end_date}')" \
-                  '    ) > 0' \
-                  '  )' \
-                  ')'
+                 "  (issues.author_id = #{user}" \
+                 "   AND (CAST(issues.created_on AS DATE) BETWEEN '#{start_date}' AND '#{end_date}'))" \
+                 '  OR (' \
+                 "    (select count(*) from journals where journalized_type = 'Issue' AND journalized_id = issues.id" \
+                 "      AND journals.user_id = #{user}" \
+                 "      AND (CAST(journals.created_on AS DATE) BETWEEN '#{start_date}' AND '#{end_date}')" \
+                 '    ) > 0' \
+                 '  )' \
+                 ')'
 
           return sql
         end
