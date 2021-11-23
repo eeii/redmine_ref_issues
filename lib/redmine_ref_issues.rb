@@ -5,7 +5,11 @@ module RedmineRefIssues
 
   class << self
     def setup
-      Additionals.load_macros 'redmine_ref_issues'
+      Dir[Redmine::Plugin.find(:redmine_ref_issues).directory,
+          'lib',
+          'redmine_ref_issues',
+          'wiki_macros',
+          '**/*_macro.rb'].sort.each { |f| require f }
     end
 
     def cast_table_field(db_table, db_field)
