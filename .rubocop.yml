@@ -85,4 +85,4 @@ Naming/VariableNumber:
 Rails/OutputSafety:
   Enabled: true
   Exclude:
-    - 'lib/redmine_ref_issues/macro.rb'
+    - lib/redmine_ref_issues/wiki_macros/ref_issues_macro.rb

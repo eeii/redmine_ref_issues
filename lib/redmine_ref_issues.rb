@@ -1,12 +1,11 @@
 # frozen_string_literal: true
 
-require 'redmine_ref_issues/version'
-
 module RedmineRefIssues
+  VERSION = '1.0.1'
+
   class << self
     def setup
-      require_dependency 'redmine_ref_issues/parser'
-      require_dependency 'redmine_ref_issues/macro'
+      Additionals.load_macros 'redmine_ref_issues'
     end
 
     def cast_table_field(db_table, db_field)

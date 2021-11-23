@@ -14,6 +14,8 @@ Redmine::Plugin.register :redmine_ref_issues do
   requires_redmine version_or_higher: '4.1'
 end
 
-Rails.configuration.to_prepare do
-  RedmineRefIssues.setup
+if Rails.version > '6.0'
+  ActiveSupport.on_load(:active_record) { RedmineRefIssues.setup }
+else
+  Rails.configuration.to_prepare { RedmineRefIssues.setup }
 end
