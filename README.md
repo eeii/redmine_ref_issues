@@ -20,8 +20,9 @@ This is a fork of [redmine_wiki_lists](https://github.com/tkusukawa/redmine_wiki
 1. Clone this repository into `redmine/plugins/redmine_ref_issues`.
 
    ```shell
-   cd redmine/plugins
-   git clone https://github.com/alphanodes/redmine_ref_issues.git
+   cd redmine
+   git clone https://github.com/alphanodes/redmine_ref_issues.git plugins/redmine_ref_issues
+   bundle install
    ```
 
 2. Restart your Redmine application server.

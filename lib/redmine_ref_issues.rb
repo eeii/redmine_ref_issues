@@ -1,17 +1,11 @@
 # frozen_string_literal: true
 
 module RedmineRefIssues
-  VERSION = '1.0.1'
+  VERSION = '1.0.2'
+
+  include RedminePluginKit::PluginBase
 
   class << self
-    def setup
-      Dir[File.join(Redmine::Plugin.find(:redmine_ref_issues).directory,
-                    'lib',
-                    'redmine_ref_issues',
-                    'wiki_macros',
-                    '**/*_macro.rb')].sort.each { |f| require f }
-    end
-
     def cast_table_field(db_table, db_field)
       if Redmine::Database.postgresql?
         "CAST(#{db_table}.#{db_field} AS TEXT)"
@@ -23,6 +17,13 @@ module RedmineRefIssues
     def additionals_help_items
       [{ title: 'Redmine ref_issues macro',
          url: 'https://github.com/AlphaNodes/redmine_ref_issues#usage' }]
+    end
+
+    private
+
+    def setup
+      # Macros
+      loader.load_macros!
     end
   end
 end
