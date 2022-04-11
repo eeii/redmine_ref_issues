@@ -1,9 +1,7 @@
 require:
   - rubocop-performance
   - rubocop-rails
-
-Rails:
-  Enabled: true
+  - rubocop-minitest
 
 AllCops:
   TargetRubyVersion: 2.6
@@ -13,6 +11,16 @@ AllCops:
     - 'Gemfile'
     - '/**/*.rsb'
     - '/**/*.rb'
+
+Rails:
+  Enabled: true
+
+Minitest/MultipleAssertions:
+  Max: 5
+  Enabled: true
+
+Minitest/AssertPredicate:
+  Enabled: false
 
 Metrics/AbcSize:
   Enabled: false
