@@ -148,6 +148,7 @@ module RedmineRefIssues
       @query.available_filters['parent_id'] = { type: :int }
       @query.available_filters['id'] = { type: :int }
       @query.available_filters['treated'] = { type: :date }
+      @query.available_filters['sprint_id'] = { type: :int }
 
       @query
     end
